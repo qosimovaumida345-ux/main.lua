@@ -1,151 +1,113 @@
 -- =======================================================
--- BRAINROT MEGA-ADMIN HUB [GOD-VERSION]
+-- DELTA MOBILE: BRAINROT ULTIMATE HUB (V12)
 -- =======================================================
 
-local Library = {Flags = {}} -- Oddiyroq GUI kutubxonasi simulyatsiyasi
 local Players = game:GetService("Players")
 local LPlayer = Players.LocalPlayer
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local CoreGui = game:GetService("CoreGui")
 
--- 1. NETWORKING YO'LI (Sening skrinshotlaringdan olindi)
-local NetPath = ReplicatedStorage:FindFirstChild("Shared") 
-    and ReplicatedStorage.Shared:FindFirstChild("Remotes")
-    and ReplicatedStorage.Shared.Remotes:FindFirstChild("Networking")
-    and ReplicatedStorage.Shared.Remotes.Networking:FindFirstChild("RE")
+-- 🛡️ NETWORKING BYPASS (Sening logingdagi yo'l)
+local NetPath = nil
+pcall(function()
+    NetPath = ReplicatedStorage.Shared.Remotes.Networking.RE
+end)
 
--- 2. GUI YARATISH
-if CoreGui:FindFirstChild("MegaHub") then CoreGui.MegaHub:Destroy() end
+-- 📱 MOBILE GUI YARATISH
+if CoreGui:FindFirstChild("DeltaBrainrot") then CoreGui.DeltaBrainrot:Destroy() end
 local Gui = Instance.new("ScreenGui", CoreGui)
-Gui.Name = "MegaHub"
+Gui.Name = "DeltaBrainrot"
 
 local Main = Instance.new("Frame", Gui)
-Main.Size = UDim2.new(0, 550, 0, 450)
-Main.Position = UDim2.new(0.5, -275, 0.5, -225)
-Main.BackgroundColor3 = Color3.fromRGB(15, 15, 25)
-Main.BorderSizePixel = 0
+Main.Size = UDim2.new(0, 350, 0, 400) -- Mobil uchun ixcham o'lcham
+Main.Position = UDim2.new(0.5, -175, 0.5, -200)
+Main.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
 Main.Active = true
-Main.Draggable = true
+Main.Draggable = true -- Barmoq bilan surish uchun
 
--- Chiroyli UI bezaklari
 local Corner = Instance.new("UICorner", Main)
 local Title = Instance.new("TextLabel", Main)
-Title.Size = UDim2.new(1, 0, 0, 50)
-Title.Text = "BRAINROT MEGA-HUB V10 [GITHUB EDITION]"
-Title.TextColor3 = Color3.fromRGB(0, 255, 255)
-Title.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-Title.Font = Enum.Font.Code
-Title.TextSize = 20
+Title.Size = UDim2.new(1, 0, 0, 40)
+Title.Text = "DELTA BRAINROT V12"
+Title.TextColor3 = Color3.fromRGB(0, 255, 150)
+Title.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+Instance.new("UICorner", Title)
 
--- Log Oynasi
-local LogFrame = Instance.new("ScrollingFrame", Main)
-LogFrame.Size = UDim2.new(0, 200, 1, -60)
-LogFrame.Position = UDim2.new(1, -210, 0, 55)
-LogFrame.BackgroundColor3 = Color3.fromRGB(5, 5, 10)
-LogFrame.CanvasSize = UDim2.new(0, 0, 20, 0)
-Instance.new("UIListLayout", LogFrame)
+-- FUNKSIYALAR PANELI
+local Scroll = Instance.new("ScrollingFrame", Main)
+Scroll.Size = UDim2.new(1, -20, 1, -60)
+Scroll.Position = UDim2.new(0, 10, 0, 50)
+Scroll.BackgroundTransparency = 1
+Scroll.CanvasSize = UDim2.new(0, 0, 2, 0)
+local List = Instance.new("UIListLayout", Scroll)
+List.Padding = UDim.new(0, 8)
 
-local function PushLog(txt)
-    local l = Instance.new("TextLabel", LogFrame)
-    l.Size = UDim2.new(1, 0, 0, 25)
-    l.Text = "> " .. txt
-    l.TextColor3 = Color3.fromRGB(0, 200, 255)
-    l.BackgroundTransparency = 1
-    l.TextXAlignment = Enum.TextXAlignment.Left
-    l.TextWrapped = true
-    LogFrame.CanvasPosition = Vector2.new(0, 99999)
-end
-
--- Tugmalar Paneli
-local Buttons = Instance.new("ScrollingFrame", Main)
-Buttons.Size = UDim2.new(0, 320, 1, -60)
-Buttons.Position = UDim2.new(0, 10, 0, 55)
-Buttons.BackgroundTransparency = 1
-Instance.new("UIListLayout", Buttons).Padding = UDim.new(0, 5)
-
-local function MakeBtn(name, color, func)
-    local b = Instance.new("TextButton", Buttons)
-    b.Size = UDim2.new(1, -10, 0, 40)
-    b.Text = name
+local function AddBtn(txt, color, func)
+    local b = Instance.new("TextButton", Scroll)
+    b.Size = UDim2.new(1, -10, 0, 45)
+    b.Text = txt
     b.BackgroundColor3 = color
     b.TextColor3 = Color3.new(1,1,1)
     b.Font = Enum.Font.GothamBold
+    b.TextSize = 16
     Instance.new("UICorner", b)
     b.MouseButton1Click:Connect(func)
 end
 
--- --- FUNKSIYALAR ---
-
--- 1. Predictor (Mashina nima chiqarishini aytadi)
-MakeBtn("🔮 START BRAINROT PREDICTOR", Color3.fromRGB(120, 0, 255), function()
-    PushLog("Skanerlanmoqda...")
+-- 1. 🔮 PREDICTOR (ASOSIY FUNKSIYA)
+AddBtn("🔮 START PREDICTOR", Color3.fromRGB(100, 0, 200), function()
     if NetPath then
+        game:GetService("StarterGui"):SetCore("SendNotification", {Title = "Predictor", Text = "Mashinani ishlating!"})
         NetPath.SpawnMachines.SpawnMachineCombineResult.OnClientEvent:Connect(function(res)
-            PushLog("NATIJA: Keyingi chiqadigan narsa: " .. tostring(res))
-            -- Ekran o'rtasida katta ogohlantirish
-            local hint = Instance.new("Hint", workspace)
-            hint.Text = "DIQQAT: KEYINGI BRAINROT -> " .. tostring(res)
+            -- Ekran o'rtasida katta xabar
+            local msg = Instance.new("Message", workspace)
+            msg.Text = "⚠️ KEYINGI CHIQADIGAN: " .. string.upper(tostring(res))
             task.wait(4)
-            hint:Destroy()
+            msg:Destroy()
         end)
-        PushLog("Predictor tayyor! Mashinani ishlating.")
     else
-        PushLog("Xato: Networking topilmadi!")
+        print("Xato: Remote topilmadi!")
     end
 end)
 
--- 2. Event Spam (Serverni "Brainrot" qilish)
-MakeBtn("⚡ TRIGGER ALL EVENTS (GALAXY/MAGMA)", Color3.fromRGB(0, 150, 0), function()
+-- 2. 🌌 ALL EVENTS (GALAXY/MAGMA/ACID)
+AddBtn("☄️ TRIGGER ALL EVENTS", Color3.fromRGB(0, 120, 250), function()
     if NetPath then
         pcall(function()
             NetPath.Events.GalaxySpawnComet:FireServer()
             NetPath.Events.MagmaSpawnFireball:FireServer()
             NetPath.Events.AcidRainSpawnCloud:FireServer()
         end)
-        PushLog("Barcha eventlar serverga yuborildi!")
     end
 end)
 
--- 3. Player Ban/Kick GUI (Sening logingdagi AFKLuckSync orqali)
-MakeBtn("🚫 BAN/KICK PLAYER (SELECT)", Color3.fromRGB(180, 0, 0), function()
-    PushLog("O'yinchilar ro'yxati skan qilinmoqda...")
+-- 3. 🚫 ADMIN: KICK/BAN (Sening logingdagi AFKLuckSync orqali)
+AddBtn("❌ KICK ALL PLAYERS", Color3.fromRGB(200, 0, 0), function()
     for _, p in pairs(Players:GetPlayers()) do
         if p ~= LPlayer then
-            pcall(function()
-                NetPath.Misc.AFKLuckSync:FireServer(p, "kick")
-            end)
-            PushLog("Targeted: " .. p.Name)
+            pcall(function() NetPath.Misc.AFKLuckSync:FireServer(p, "kick") end)
         end
     end
 end)
 
--- 4. Luck 100x (Visual + Sync Attempt)
-MakeBtn("🍀 ACTIVATE 100x LUCK", Color3.fromRGB(0, 200, 150), function()
+-- 4. 🍀 LUCK 100x (SPAM)
+AddBtn("🍀 ACTIVATE 100x LUCK", Color3.fromRGB(0, 180, 100), function()
     task.spawn(function()
-        for i = 1, 50 do
-            NetPath.Misc.AFKLuckSync:FireServer(true)
-            task.wait(0.1)
+        for i = 1, 100 do
+            if NetPath then NetPath.Misc.AFKLuckSync:FireServer(true) end
+            task.wait(0.05)
         end
     end)
-    PushLog("Luck Sync 100x yoqildi!")
 end)
 
--- 5. God Mode & Fly (Seni tsunami o'ldira olmaydi)
-MakeBtn("🛡️ INVINCIBLE GOD + FLY", Color3.fromRGB(200, 150, 0), function()
-    local char = LPlayer.Character or LPlayer.CharacterAdded:Wait()
-    local hum = char:WaitForChild("Humanoid")
-    hum.MaxHealth = 9e9
-    hum.Health = 9e9
-    hum:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
-    
-    local bv = Instance.new("BodyVelocity", char.PrimaryPart)
-    bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
-    task.spawn(function()
-        while task.wait() do
-            bv.Velocity = workspace.CurrentCamera.CFrame.LookVector * 250
-        end
-    end)
-    PushLog("Siz endi o'lmaysiz va ucha olasiz!")
+-- 5. 🛡️ GOD MODE & SPEED
+AddBtn("🛡️ GOD MODE + SPEED", Color3.fromRGB(200, 150, 0), function()
+    local char = LPlayer.Character
+    if char then
+        char.Humanoid.MaxHealth = 9e9
+        char.Humanoid.Health = 9e9
+        char.Humanoid.WalkSpeed = 100
+    end
 end)
 
-PushLog("Hub yuklandi! GitHub-dan foydalanganingiz uchun rahmat.")
+print("Delta Brainrot Hub yuklandi!")
