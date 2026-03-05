@@ -1,0 +1,42 @@
+-- Muhitni tayyorlash
+local env = getfenv()
+env.Speed = 100
+env.FlyPower = 50
+
+print("Skript muvaffaqiyatli ishga tushdi!")
+
+-- 1. TEZLIKNI OSHIRISH (SpeedHack)
+game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = env.Speed
+
+-- 2. ODDIY UCHISH (Fly) - Bu qism xarakterni havoda ushlab turadi
+local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
+
+local char = player.Character or player.CharacterAdded:Wait()
+local root = char:WaitForChild("HumanoidRootPart")
+
+-- Havoda ushlab turuvchi kuch yaratish
+local bv = Instance.new("BodyVelocity")
+bv.Velocity = Vector3.new(0, 0, 0)
+bv.MaxForce = Vector3.new(0, 0, 0) -- Avvaliga o'chiq bo'ladi
+bv.Parent = root
+
+-- 'F' tugmasini bossangiz uchish yoqiladi/o'chadi
+mouse.KeyDown:Connect(function(key)
+    if key == "f" then
+        if bv.MaxForce == Vector3.new(0, 0, 0) then
+            bv.MaxForce = Vector3.new(4000, 4000, 4000)
+            print("Uchish yoqildi!")
+        else
+            bv.MaxForce = Vector3.new(0, 0, 0)
+            print("Uchish o'chirildi!")
+        end
+    end
+end)
+
+-- Uchish yo'nalishini boshqarish
+game:GetService("RunService").RenderStepped:Connect(function()
+    if bv.MaxForce ~= Vector3.new(0, 0, 0) then
+        bv.Velocity = char.Humanoid.MoveDirection * env.FlyPower
+    end
+end)
