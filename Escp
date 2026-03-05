@@ -1,113 +1,117 @@
 -- =======================================================
--- DELTA MOBILE: BRAINROT ULTIMATE HUB (V12)
+-- DELTA MOBILE: BRAINROT HUB V13 [SUPER-SCANNER]
 -- =======================================================
 
 local Players = game:GetService("Players")
 local LPlayer = Players.LocalPlayer
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local CoreGui = game:GetService("CoreGui")
 
--- 🛡️ NETWORKING BYPASS (Sening logingdagi yo'l)
-local NetPath = nil
-pcall(function()
-    NetPath = ReplicatedStorage.Shared.Remotes.Networking.RE
-end)
+-- 🔍 GLOBAL SCANNER (Signallarni ismi bo'yicha topadi)
+local Remotes = {}
+local function ScanRemotes()
+    for _, v in pairs(game:GetDescendants()) do
+        if v:IsA("RemoteEvent") or v:IsA("RemoteFunction") then
+            Remotes[v.Name] = v
+        end
+    end
+end
 
--- 📱 MOBILE GUI YARATISH
-if CoreGui:FindFirstChild("DeltaBrainrot") then CoreGui.DeltaBrainrot:Destroy() end
+-- Skanerlashni boshlash
+ScanRemotes()
+
+-- GUI YARATISH
+if CoreGui:FindFirstChild("DeltaV13") then CoreGui.DeltaV13:Destroy() end
 local Gui = Instance.new("ScreenGui", CoreGui)
-Gui.Name = "DeltaBrainrot"
+Gui.Name = "DeltaV13"
 
 local Main = Instance.new("Frame", Gui)
-Main.Size = UDim2.new(0, 350, 0, 400) -- Mobil uchun ixcham o'lcham
-Main.Position = UDim2.new(0.5, -175, 0.5, -200)
-Main.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+Main.Size = UDim2.new(0, 340, 0, 380)
+Main.Position = UDim2.new(0.5, -170, 0.5, -190)
+Main.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
 Main.Active = true
-Main.Draggable = true -- Barmoq bilan surish uchun
+Main.Draggable = true
+Instance.new("UICorner", Main)
 
-local Corner = Instance.new("UICorner", Main)
 local Title = Instance.new("TextLabel", Main)
-Title.Size = UDim2.new(1, 0, 0, 40)
-Title.Text = "DELTA BRAINROT V12"
-Title.TextColor3 = Color3.fromRGB(0, 255, 150)
-Title.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+Title.Size = UDim2.new(1, 0, 0, 45)
+Title.Text = "BRAINROT V13 [SCANNER]"
+Title.TextColor3 = Color3.fromRGB(0, 255, 200)
+Title.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
 Instance.new("UICorner", Title)
 
--- FUNKSIYALAR PANELI
 local Scroll = Instance.new("ScrollingFrame", Main)
-Scroll.Size = UDim2.new(1, -20, 1, -60)
-Scroll.Position = UDim2.new(0, 10, 0, 50)
+Scroll.Size = UDim2.new(1, -20, 1, -65)
+Scroll.Position = UDim2.new(0, 10, 0, 55)
 Scroll.BackgroundTransparency = 1
-Scroll.CanvasSize = UDim2.new(0, 0, 2, 0)
-local List = Instance.new("UIListLayout", Scroll)
-List.Padding = UDim.new(0, 8)
+Scroll.CanvasSize = UDim2.new(0, 0, 1.5, 0)
+Instance.new("UIListLayout", Scroll).Padding = UDim.new(0, 7)
 
 local function AddBtn(txt, color, func)
     local b = Instance.new("TextButton", Scroll)
-    b.Size = UDim2.new(1, -10, 0, 45)
+    b.Size = UDim2.new(1, -5, 0, 42)
     b.Text = txt
     b.BackgroundColor3 = color
     b.TextColor3 = Color3.new(1,1,1)
     b.Font = Enum.Font.GothamBold
-    b.TextSize = 16
     Instance.new("UICorner", b)
     b.MouseButton1Click:Connect(func)
 end
 
--- 1. 🔮 PREDICTOR (ASOSIY FUNKSIYA)
-AddBtn("🔮 START PREDICTOR", Color3.fromRGB(100, 0, 200), function()
-    if NetPath then
-        game:GetService("StarterGui"):SetCore("SendNotification", {Title = "Predictor", Text = "Mashinani ishlating!"})
-        NetPath.SpawnMachines.SpawnMachineCombineResult.OnClientEvent:Connect(function(res)
-            -- Ekran o'rtasida katta xabar
-            local msg = Instance.new("Message", workspace)
-            msg.Text = "⚠️ KEYINGI CHIQADIGAN: " .. string.upper(tostring(res))
+-- --- FUNKSIYALAR ---
+
+-- 1. 🔮 PREDICTOR
+AddBtn("🔮 PREDICT BRAINROT", Color3.fromRGB(130, 0, 255), function()
+    local target = Remotes["SpawnMachineCombineResult"]
+    if target then
+        game:GetService("StarterGui"):SetCore("SendNotification", {Title = "Scanner", Text = "Predictor yoqildi!"})
+        target.OnClientEvent:Connect(function(res)
+            local m = Instance.new("Message", workspace)
+            m.Text = "🚀 KEYINGI: " .. tostring(res)
             task.wait(4)
-            msg:Destroy()
+            m:Destroy()
         end)
     else
-        print("Xato: Remote topilmadi!")
+        game:GetService("StarterGui"):SetCore("SendNotification", {Title = "Xato", Text = "Mashina signali topilmadi!"})
     end
 end)
 
--- 2. 🌌 ALL EVENTS (GALAXY/MAGMA/ACID)
-AddBtn("☄️ TRIGGER ALL EVENTS", Color3.fromRGB(0, 120, 250), function()
-    if NetPath then
-        pcall(function()
-            NetPath.Events.GalaxySpawnComet:FireServer()
-            NetPath.Events.MagmaSpawnFireball:FireServer()
-            NetPath.Events.AcidRainSpawnCloud:FireServer()
+-- 2. 🍀 LUCK SYNC (AFK Luck orqali)
+AddBtn("🍀 100x LUCK SPAM", Color3.fromRGB(0, 180, 120), function()
+    local luck = Remotes["AFKLuckSync"]
+    if luck then
+        task.spawn(function()
+            for i = 1, 100 do
+                luck:FireServer(true)
+                task.wait(0.05)
+            end
         end)
+        game:GetService("StarterGui"):SetCore("SendNotification", {Title = "Luck", Text = "Sync spam boshlandi!"})
     end
 end)
 
--- 3. 🚫 ADMIN: KICK/BAN (Sening logingdagi AFKLuckSync orqali)
-AddBtn("❌ KICK ALL PLAYERS", Color3.fromRGB(200, 0, 0), function()
-    for _, p in pairs(Players:GetPlayers()) do
-        if p ~= LPlayer then
-            pcall(function() NetPath.Misc.AFKLuckSync:FireServer(p, "kick") end)
+-- 3. ☄️ EVENT SPAWNER
+AddBtn("☄️ SPAWN ALL EVENTS", Color3.fromRGB(0, 120, 255), function()
+    local comet = Remotes["GalaxySpawnComet"]
+    local fire = Remotes["MagmaSpawnFireball"]
+    if comet then comet:FireServer() end
+    if fire then fire:FireServer() end
+    game:GetService("StarterGui"):SetCore("SendNotification", {Title = "Events", Text = "Galaxy/Magma yuborildi!"})
+end)
+
+-- 4. ❌ KICK PLAYER (TEST)
+AddBtn("❌ KICK ALL (EXPERIMENTAL)", Color3.fromRGB(180, 0, 0), function()
+    local luck = Remotes["AFKLuckSync"]
+    if luck then
+        for _, p in pairs(Players:GetPlayers()) do
+            if p ~= LPlayer then
+                luck:FireServer(p, "kick")
+            end
         end
     end
 end)
 
--- 4. 🍀 LUCK 100x (SPAM)
-AddBtn("🍀 ACTIVATE 100x LUCK", Color3.fromRGB(0, 180, 100), function()
-    task.spawn(function()
-        for i = 1, 100 do
-            if NetPath then NetPath.Misc.AFKLuckSync:FireServer(true) end
-            task.wait(0.05)
-        end
-    end)
+-- 5. 🛠 RE-SCAN (Agar ishlamasa qayta qidirish)
+AddBtn("🔄 RE-SCAN REMOTES", Color3.fromRGB(100, 100, 100), function()
+    ScanRemotes()
+    game:GetService("StarterGui"):SetCore("SendNotification", {Title = "Scanner", Text = "Qayta skanerlandi!"})
 end)
-
--- 5. 🛡️ GOD MODE & SPEED
-AddBtn("🛡️ GOD MODE + SPEED", Color3.fromRGB(200, 150, 0), function()
-    local char = LPlayer.Character
-    if char then
-        char.Humanoid.MaxHealth = 9e9
-        char.Humanoid.Health = 9e9
-        char.Humanoid.WalkSpeed = 100
-    end
-end)
-
-print("Delta Brainrot Hub yuklandi!")
