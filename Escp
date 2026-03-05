@@ -1,42 +1,53 @@
--- Muhitni tayyorlash
+-- Muhitni sozlash (getfenv orqali)
 local env = getfenv()
-env.Speed = 100
+env.Speed = 60 -- Tezlikni juda baland qilmagan ma'qul (anti-cheat uchun)
 env.FlyPower = 50
+env.Flying = false
 
-print("Skript muvaffaqiyatli ishga tushdi!")
-
--- 1. TEZLIKNI OSHIRISH (SpeedHack)
-game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = env.Speed
-
--- 2. ODDIY UCHISH (Fly) - Bu qism xarakterni havoda ushlab turadi
 local player = game.Players.LocalPlayer
-local mouse = player:GetMouse()
-
 local char = player.Character or player.CharacterAdded:Wait()
 local root = char:WaitForChild("HumanoidRootPart")
+local hum = char:WaitForChild("Humanoid")
 
--- Havoda ushlab turuvchi kuch yaratish
+-- TEZLIKNI OSHIRISH
+hum.WalkSpeed = env.Speed
+
+-- UCHISH UCHUN BODYVELOCITY YARATISH
 local bv = Instance.new("BodyVelocity")
 bv.Velocity = Vector3.new(0, 0, 0)
-bv.MaxForce = Vector3.new(0, 0, 0) -- Avvaliga o'chiq bo'ladi
+bv.MaxForce = Vector3.new(0, 0, 0)
 bv.Parent = root
 
--- 'F' tugmasini bossangiz uchish yoqiladi/o'chadi
-mouse.KeyDown:Connect(function(key)
-    if key == "f" then
-        if bv.MaxForce == Vector3.new(0, 0, 0) then
-            bv.MaxForce = Vector3.new(4000, 4000, 4000)
-            print("Uchish yoqildi!")
-        else
-            bv.MaxForce = Vector3.new(0, 0, 0)
-            print("Uchish o'chirildi!")
-        end
+-- EKRANDA TUGMA YARATISH (Mobil foydalanuvchilar uchun)
+local screenGui = Instance.new("ScreenGui")
+local button = Instance.new("TextButton")
+
+screenGui.Parent = game.CoreGui -- Executorlar uchun maxsus joy
+button.Parent = screenGui
+button.Size = UDim2.new(0, 150, 0, 50)
+button.Position = UDim2.new(0.5, -75, 0.1, 0)
+button.Text = "UCHISH: OFF"
+button.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+
+-- UCHISH FUNKSIYASI
+button.MouseButton1Click:Connect(function()
+    env.Flying = not env.Flying
+    if env.Flying then
+        bv.MaxForce = Vector3.new(400000, 400000, 400000)
+        button.Text = "UCHISH: ON"
+        button.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+    else
+        bv.MaxForce = Vector3.new(0, 0, 0)
+        button.Text = "UCHISH: OFF"
+        button.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
     end
 end)
 
--- Uchish yo'nalishini boshqarish
+-- DOIMIY HARAKATNI BOSHQARISH
 game:GetService("RunService").RenderStepped:Connect(function()
-    if bv.MaxForce ~= Vector3.new(0, 0, 0) then
-        bv.Velocity = char.Humanoid.MoveDirection * env.FlyPower
+    if env.Flying then
+        bv.Velocity = hum.MoveDirection * env.FlyPower + Vector3.new(0, 2, 0) -- Bir oz tepaga ko'tarib turadi
     end
 end)
+
+print("Skript Xeno uchun tayyor!")
